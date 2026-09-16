@@ -1,0 +1,4 @@
+match_name,state,provider_request_id,phone,email,association_confidence,evidence,validated,dnc_status,actual_charge
+Jane Sample,completed,demo-provider-100,+1 202-555-0101,jane.sample@example.com,0.94,synthetic name and mailing-address association,true,clear,0.02
+Morgan Reyes,completed,demo-provider-200,+1 202-555-0102,morgan.reyes@example.com,0.91,synthetic manager evidence and address association,true,clear,0.02
+Taylor Timeout,timeout,demo-provider-500,,,0.0,synthetic timeout,false,unknown,0

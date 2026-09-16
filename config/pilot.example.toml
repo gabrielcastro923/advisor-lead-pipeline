@@ -1,0 +1,19 @@
+[market]
+allowed_markets = ["Phoenix, AZ"]
+allowed_property_types = ["single_family", "condo", "townhouse", "residential"]
+
+[pipeline]
+min_ownership_confidence = 0.80
+min_representative_confidence = 0.80
+portfolio_min_properties = 2
+portfolio_max_properties = 20
+cohort_limit = 100
+fresh_days = 45
+
+[enrichment]
+provider = "demo"
+operation = "person_skip_trace"
+adapter_version = "1"
+estimated_cost_per_request = 0.02
+budget_cap = 5.00
+currency = "USD"

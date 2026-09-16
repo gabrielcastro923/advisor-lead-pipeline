@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "advisor-lead-pipeline"
+version = "0.1.0"
+description = "A review-first property-to-owner lead pipeline for advisor teams."
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Belong" }]
+dependencies = []
+
+[project.scripts]
+advisor-leads = "advisor_lead_pipeline.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+advisor_lead_pipeline = ["migrations/*.sql"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
