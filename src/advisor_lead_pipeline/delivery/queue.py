@@ -39,7 +39,7 @@ def export_queue(db_path: str | Path, output_path: str | Path) -> int:
             FROM leads l
             JOIN owners legal ON legal.id=l.owner_id
             JOIN owners target ON target.id=l.target_person_id
-            WHERE l.review_decision='approve' AND l.assigned_advisor<>''
+            WHERE l.in_current_build=1 AND l.review_decision='approve' AND l.assigned_advisor<>''
             ORDER BY l.score DESC, l.id
             """
         ).fetchall()

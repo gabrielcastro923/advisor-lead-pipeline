@@ -23,6 +23,7 @@ class BuildStats:
 def build_leads(db_path: str | Path, config: AppConfig) -> BuildStats:
     candidates: list[dict] = []
     with transaction(db_path) as conn:
+        conn.execute("UPDATE leads SET in_current_build=0")
         owner_rows = conn.execute(
             """
             SELECT o.*, COUNT(DISTINCT r.property_id) AS property_count,
@@ -135,8 +136,9 @@ def build_leads(db_path: str | Path, config: AppConfig) -> BuildStats:
                 """
                 INSERT INTO leads(
                     id, owner_id, target_person_id, cohort, score, reasons_json,
-                    property_count, workflow_status, allowed_channels, created_at, updated_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    property_count, workflow_status, allowed_channels, in_current_build,
+                    created_at, updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)
                 ON CONFLICT(id) DO UPDATE SET
                     target_person_id=excluded.target_person_id, score=excluded.score,
                     reasons_json=excluded.reasons_json, property_count=excluded.property_count,
@@ -144,7 +146,8 @@ def build_leads(db_path: str | Path, config: AppConfig) -> BuildStats:
                         WHEN leads.review_decision='approve' THEN leads.workflow_status
                         ELSE excluded.workflow_status
                     END,
-                    allowed_channels=excluded.allowed_channels, updated_at=excluded.updated_at
+                    allowed_channels=excluded.allowed_channels, in_current_build=1,
+                    updated_at=excluded.updated_at
                 """,
                 (
                     lead_id,

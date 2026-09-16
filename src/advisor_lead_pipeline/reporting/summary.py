@@ -23,22 +23,34 @@ def build_summary(db_path: str | Path) -> dict:
                 SELECT COUNT(DISTINCT owner_id) FROM relationships WHERE property_id IS NOT NULL
                 """
             ).fetchone()[0],
-            "leads": conn.execute("SELECT COUNT(*) FROM leads").fetchone()[0],
+            "leads": conn.execute("SELECT COUNT(*) FROM leads WHERE in_current_build=1").fetchone()[
+                0
+            ],
             "resolved_targets": conn.execute(
-                "SELECT COUNT(*) FROM leads WHERE target_person_id IS NOT NULL"
+                """
+                SELECT COUNT(*) FROM leads
+                WHERE in_current_build=1 AND target_person_id IS NOT NULL
+                """
             ).fetchone()[0],
             "enriched_targets": conn.execute(
                 """
                 SELECT COUNT(DISTINCT l.id) FROM leads l JOIN contacts c
                     ON c.person_owner_id=l.target_person_id
-                WHERE c.association_confidence>=0.8 AND c.validated_at IS NOT NULL
+                WHERE l.in_current_build=1 AND c.association_confidence>=0.8
+                  AND c.validated_at IS NOT NULL
                 """
             ).fetchone()[0],
             "approved": conn.execute(
-                "SELECT COUNT(*) FROM leads WHERE review_decision='approve'"
+                """
+                SELECT COUNT(*) FROM leads
+                WHERE in_current_build=1 AND review_decision='approve'
+                """
             ).fetchone()[0],
             "queued": conn.execute(
-                "SELECT COUNT(*) FROM leads WHERE workflow_status='queued'"
+                """
+                SELECT COUNT(*) FROM leads
+                WHERE in_current_build=1 AND workflow_status='queued'
+                """
             ).fetchone()[0],
             "attempted": conn.execute("SELECT COUNT(DISTINCT lead_id) FROM outcomes").fetchone()[0],
             "right_party": conn.execute(
@@ -58,9 +70,19 @@ def build_summary(db_path: str | Path) -> dict:
             ).fetchone()[0],
         }
         spend = budget_snapshot(conn)
-        by_cohort = _group_counts(conn, "SELECT cohort, COUNT(*) FROM leads GROUP BY cohort")
+        by_cohort = _group_counts(
+            conn,
+            """
+            SELECT cohort, COUNT(*) FROM leads
+            WHERE in_current_build=1 GROUP BY cohort
+            """,
+        )
         by_status = _group_counts(
-            conn, "SELECT workflow_status, COUNT(*) FROM leads GROUP BY workflow_status"
+            conn,
+            """
+            SELECT workflow_status, COUNT(*) FROM leads
+            WHERE in_current_build=1 GROUP BY workflow_status
+            """,
         )
         by_outcome = _group_counts(conn, "SELECT outcome, COUNT(*) FROM outcomes GROUP BY outcome")
         cohort_outcomes: dict[str, dict[str, int]] = defaultdict(dict)

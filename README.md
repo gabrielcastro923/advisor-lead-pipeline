@@ -100,3 +100,6 @@ and budget ledger offline. A live adapter should be added only after its exact a
 response schema, retention terms, and billing behavior are verified with a permitted small test.
 
 See [`docs/operations.md`](docs/operations.md) and [`SECURITY.md`](SECURITY.md) before a real pilot.
+
+The aggregate findings from the first no-spend Maricopa run are in
+[`docs/first-iteration-2026-09-16.md`](docs/first-iteration-2026-09-16.md).

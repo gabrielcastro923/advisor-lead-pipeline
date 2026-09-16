@@ -122,7 +122,8 @@ def import_maricopa(
                     owner_mailing_city=(row.get("OwnerCity") or "").strip(),
                     owner_mailing_state=(row.get("OwnerState") or "").strip().upper(),
                     owner_mailing_postal_code=owner_postal,
-                    owner_jurisdiction="us_az" if owner_kind == "entity" else "",
+                    # Parcel location does not establish the company's legal jurisdiction.
+                    owner_jurisdiction="",
                     ownership_confidence=1.0,
                     observed_at=observed_at,
                     source_updated_at=observed_at,

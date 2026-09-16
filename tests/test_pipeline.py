@@ -3,6 +3,7 @@ from __future__ import annotations
 import csv
 import tempfile
 import unittest
+from dataclasses import replace
 from pathlib import Path
 
 from advisor_lead_pipeline.config import load_config
@@ -80,6 +81,27 @@ class PipelineTest(unittest.TestCase):
         self.assertEqual(statuses["Agent Only LLC"], "needs_ownership_review")
         self.assertEqual(statuses["Existing Client LLC"], "excluded_current_client")
         self.assertEqual(statuses["Sunny Door LLC"], "ready_for_enrichment")
+
+    def test_rerun_marks_old_cohort_rows_outside_the_current_build(self) -> None:
+        self.import_demo()
+        build_leads(self.db, self.config)
+        smaller = replace(
+            self.config,
+            pipeline=replace(self.config.pipeline, cohort_limit=1),
+        )
+        build_leads(self.db, smaller)
+        conn = connect(self.db)
+        try:
+            current = conn.execute(
+                "SELECT COUNT(*) FROM leads WHERE in_current_build=1"
+            ).fetchone()[0]
+            stale = conn.execute("SELECT COUNT(*) FROM leads WHERE in_current_build=0").fetchone()[
+                0
+            ]
+        finally:
+            conn.close()
+        self.assertEqual(current, 2)
+        self.assertGreater(stale, 0)
 
     def test_enrichment_correlates_requests_deduplicates_and_holds_timeout_reservation(
         self,

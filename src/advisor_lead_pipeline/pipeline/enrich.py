@@ -44,7 +44,7 @@ def run_enrichment(
             SELECT l.*, o.canonical_name, o.mailing_line1, o.mailing_city,
                    o.mailing_state, o.mailing_postal_code
             FROM leads l JOIN owners o ON o.id=l.target_person_id
-            WHERE l.workflow_status='ready_for_enrichment'
+            WHERE l.in_current_build=1 AND l.workflow_status='ready_for_enrichment'
             ORDER BY l.score DESC, l.id
             """
         ).fetchall()

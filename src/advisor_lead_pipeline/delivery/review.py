@@ -42,6 +42,7 @@ def export_review(db_path: str | Path, output_path: str | Path) -> int:
             FROM leads l
             JOIN owners legal ON legal.id=l.owner_id
             LEFT JOIN owners target ON target.id=l.target_person_id
+            WHERE l.in_current_build=1
             ORDER BY l.cohort, l.score DESC, l.id
             """
         ).fetchall()

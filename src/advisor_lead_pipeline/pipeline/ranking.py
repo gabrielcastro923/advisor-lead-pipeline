@@ -45,7 +45,7 @@ def rank_owner(item: RankInput, *, fresh_days: int) -> RankResult:
         score += 15
         reasons.append("absentee ownership +15")
     if item.property_count > 1:
-        portfolio_points = min(20, (item.property_count - 1) * 5)
+        portfolio_points = min(30.0, round(5 + (item.property_count - 2) * 1.5, 1))
         score += portfolio_points
         reasons.append(f"{item.property_count}-property observed portfolio +{portfolio_points}")
     age = _age_days(item.newest_observation)
