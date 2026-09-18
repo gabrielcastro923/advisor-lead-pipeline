@@ -19,6 +19,7 @@ from .pipeline.enrich import run_enrichment
 from .reporting.summary import write_summary
 from .sources.csv_source import import_csv
 from .sources.maricopa import import_maricopa
+from .sources.zillow_snapshot import import_zillow_snapshot
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
@@ -94,6 +95,15 @@ def parser() -> argparse.ArgumentParser:
     maricopa.add_argument("--limit", type=int)
     maricopa.add_argument("--as-of")
 
+    zillow = commands.add_parser(
+        "import-zillow-snapshot",
+        help="Import an authorized Zillow HTML/JSON snapshot without making network requests",
+    )
+    zillow.add_argument("--db", required=True)
+    zillow.add_argument("--input", required=True)
+    zillow.add_argument("--authorization-reference", required=True)
+    zillow.add_argument("--observed-at")
+
     build = commands.add_parser("build-leads", help="Build deterministic lead cohorts")
     build.add_argument("--db", required=True)
     build.add_argument("--config", required=True)
@@ -152,6 +162,16 @@ def main(argv: list[str] | None = None) -> None:
                 entity_only=args.entity_only,
                 limit=args.limit,
                 as_of=args.as_of,
+            )
+        )
+    elif args.command == "import-zillow-snapshot":
+        initialize(args.db)
+        _print(
+            import_zillow_snapshot(
+                args.db,
+                args.input,
+                authorization_reference=args.authorization_reference,
+                observed_at=args.observed_at,
             )
         )
     elif args.command == "build-leads":

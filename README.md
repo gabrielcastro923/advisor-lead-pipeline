@@ -12,6 +12,8 @@ so a phone match never becomes proof of ownership or consent.
 
 - imports a documented canonical property/ownership CSV idempotently;
 - streams the Maricopa County Residential Master file through a dedicated adapter;
+- imports an authorized Zillow HTML/JSON snapshot as a rental signal without making Zillow
+  requests;
 - preserves source lineage and channel restrictions;
 - separates legal owners from LLC representatives and blocks registered-agent-only records;
 - ranks rental-signal and small-portfolio cohorts with explainable rules;
@@ -81,6 +83,35 @@ advisor-leads import-csv \
   --input /absolute/path/to/properties.csv \
   --rejects var/pilot/rejects.csv
 ```
+
+## Optional Zillow snapshot adapter
+
+This repository does **not** contain a live Zillow crawler. Zillow's current terms prohibit
+automated queries, screen/database scraping, spiders, robots, crawlers, and CAPTCHA bypass.
+The included proof of concept instead parses a locally supplied HTML or JSON snapshot only when
+the operator records a written authorization, license, or legal-approval reference. It contains
+no HTTP client, browser automation, login handling, proxy rotation, or CAPTCHA code.
+
+First import the county/assessor properties, then import an approved snapshot:
+
+```bash
+advisor-leads import-zillow-snapshot \
+  --db var/pilot/pipeline.sqlite3 \
+  --input /absolute/path/to/authorized-zillow-snapshot.html \
+  --authorization-reference "LEGAL-APPROVAL-123" \
+  --observed-at 2026-09-18T12:00:00+00:00
+```
+
+The adapter recognizes common embedded JSON shapes, keeps only active rental records, exact-matches
+their normalized address to an already imported property and recorded owner, and quarantines
+unmatched or ambiguous records. It stores only a rental observation and source lineage. It does
+not treat Zillow as ownership evidence, and Zillow-derived observations always set unsolicited
+email eligibility to false.
+
+For production, replace the local snapshot with a properly licensed Zillow Group API/feed or an
+MLS/Broker feed under approved terms, while preserving the same observation contract. Review the
+[Zillow Terms of Use](https://www.zillow.com/corporate/terms-of-use/) and
+[Zillow Group developer options](https://www.zillowgroup.com/developers/) with counsel before use.
 
 ## Review workflow
 

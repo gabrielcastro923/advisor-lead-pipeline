@@ -4,12 +4,14 @@
 
 1. Import the property source and a fresh current-client/suppression snapshot.
 2. Inspect import rejects and source counts before building leads.
-3. Resolve company member/manager evidence. A registered agent alone is insufficient.
-4. Review the dry-run cohort and estimated enrichment cost.
-5. Configure an explicit non-zero budget only for a verified provider adapter.
-6. Reconcile ambiguous paid timeouts before rerunning them.
-7. Import human review decisions before producing the advisor queue.
-8. Import dispositions using unique event IDs; apply opt-outs immediately.
+3. For any Zillow snapshot, verify the authorization reference, snapshot date, approved scope,
+   and retention terms. The adapter must remain network-free unless a licensed feed is contracted.
+4. Resolve company member/manager evidence. A registered agent alone is insufficient.
+5. Review the dry-run cohort and estimated enrichment cost.
+6. Configure an explicit non-zero budget only for a verified provider adapter.
+7. Reconcile ambiguous paid timeouts before rerunning them.
+8. Import human review decisions before producing the advisor queue.
+9. Import dispositions using unique event IDs; apply opt-outs immediately.
 
 ## Paid-run stop conditions
 

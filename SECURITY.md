@@ -10,6 +10,9 @@ This repository is safe to share only while operational data remains outside sou
   signing authority, consent, or channel eligibility.
 - A DNC-clear result is not consent. Source-use restrictions and team policy still apply.
 - RentCast-derived observations default to `unsolicited_email_allowed=false`.
+- Zillow-derived observations default to `unsolicited_email_allowed=false`. Do not add automated
+  Zillow requests, login automation, CAPTCHA bypass, proxy rotation, or cookie capture. Use the
+  snapshot adapter only with a documented authorization/license, or integrate an approved feed.
 - FOREWARN is outside this pipeline and must remain a separate, permitted manual safety/fraud
   workflow after a qualifying prospect interaction.
 - The pipeline does not send messages or write to production CRM systems.
